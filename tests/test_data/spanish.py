@@ -14,7 +14,7 @@ TEST_DATA = [
     "Véase la pág. 55 del libro.",
     "Vea el cap. 3 en el t. II de la obra.",
     "El art. 4 y el nro. 8 son clave.",
-    "Se les pidió a los niños que leyeran los párrf. 5 y 6 del art. 4 de la constitución.",
+    "Se le pidió a los niños que leyeran los párrf. 5 y 6 del art. 4 de la constitución.",
     "Consulte el párr. 5 para más información.",
     "Llama al dir. general al tel. 555-1234.",
     "Compré pan, leche, etc. para la cena.",
