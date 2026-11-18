@@ -10,16 +10,18 @@ class EsRules(Rules):
 
     TITLE_ABBRVS = Rules.TITLE_ABBRVS | {
         # Social / Professional
-        "sr", "sra", "srta", "d", "dña", "dra", "lic", "pdte",
-        "prof", "arq", "abg", "mag", "lcdo", "dr", "mtr", "mgtr",
-        "ldo", "lcda", "lda", "ing"
+         "sra", "srta", "d", "dña", "dra", "lic", "pdte",
+        "profe", "profa", "arq", "abg", "mag", "lcdo", "prof", 
+        "dr", "mtr", "mgtr", "ldo", "lcda", "lda", "ing"
 
         # Military / Religious
         "cap", "cmdte", "tte", "subtte", "hno", "hnos", "pbro", 
         "cmdt", "cmte", "almte", "cnel", "col", "gral",
 
         # Noble / Royal
-        "aa", "mm", "rr", "ss", "excmo", "ilmo"
+        "s.m", "ss.mm", "s.a.r", "ss.aa.rr", "s.a.s", "s.s", "s.a",
+        "ss.aa", "s.e", "v.e", "s.à.s.r", "aa", "mm", "rr", "ss",
+        "excmo", "ilmo"
     }
 
     # Case-sensitive pattern matching would cover the supress ones
@@ -42,7 +44,9 @@ class EsRules(Rules):
     INLINE_ONLY_ABBRVS = Rules.INLINE_ONLY_ABBRVS - {"ave"} | {
         "ej", "p. ej", "vid", "cll", "cra", "diag", "transv", "mz", "mza", 
         "lt", "urb", "asent", "dpto", "prov", "mnpio", "conj", "edif",
-        "ofic", "av", "avd", "pso", "ctra", "pl", "blvr", "avda", "atte", "fdo", "c", "cdad", "ntra", "ntro", "pol. ind", "rbla", "tlfno", "tel", "tlf",  "blq", "esc",
+        "ofic", "av", "avd", "pso", "ctra", "pl", "blvr", "avda", "atte", 
+        "fdo", "c", "cdad", "ntra", "ntro", "pol. ind", "rbla", "tlfno", 
+        "tel", "tlf",  "blq", "esc",
     }
 
     DATE_ABBRVS = Rules.DATE_ABBRVS | {
@@ -81,7 +85,7 @@ class EsRules(Rules):
         "Sucesivamente", "Tal vez", "También", "Tampoco",
         "Tarde", "Temprano", "Tercero", "Todavía", "Ya",
         "Últimamente", "Último", "Por una parte", "Por otra parte", 
-        "Porque"
+        "Porque",
 
         # Question words
         "Cuál", "Cuándo", "Cuánto", "Cómo", "Dónde", "Por qué", 
@@ -93,7 +97,6 @@ class EsRules(Rules):
     def _compile_regex_dynamically(cls):
         """Override base regex compilation to fix pronouns/ref abbrvs behavior."""
         super()._compile_regex_dynamically()
-
 
         # Ud./Uds./Vd./Vds. heuristic
         # Don't split if the next word is NOT a common starter (assumes it's a proper name).
@@ -108,9 +111,31 @@ class EsRules(Rules):
             # Only protect the first pair so a following sentence still splits.
             re.compile(r"\b[A-Z]{2}\.(?=\s*[A-Z]{1,2}\.)"),
 
-            # In Spanish/Portuguese, these reference abbreviationsare are case-sensitve.
-            # re.compile(r"(?:Nos?|Para)\.(?=\s*(\d+|\w))")
+            # Era abbreviations a. C. / d. C. (antes/después de Cristo), spaced or not.
+            re.compile(r"\b[ad]\.(?=\s*C\.)"),
             
-            # Whitespace separated abbreviations (a. C., d. C.)
-            re.compile(r"\b[a-z]{1}\.(?=\s[A-Z]{1}\.)\B"),
         ])
+
+        # Patterns to add missing boundaries to the end of sentences, i.e. when an abbreviation ends a sentence and is not detected as such.
+        cls.ADD_BOUNDARY_PATTERN = re.compile(
+            r"""
+            (?:
+                # Era abbreviations (a. C., d. C.)
+                \b[ad]\.\s*C\.
+                |
+                # Degrees Celsius (both °C and ºC since keyboards might mix them up)
+                [°º]\s*C\.
+                |
+                # Floor and apartment indicators (2º A., 3ª D)
+                \b\d+[ºª]\s+[A-Z]\.
+            )
+            (?=\s+[¿¡A-ZÁÉÍÓÚÑ])
+            """, re.X
+        )
+     
+    def post_process_boundaries(self, sentence_boundaries: set[int], text: str) -> None:    
+        super().post_process_boundaries(sentence_boundaries, text)
+
+        # Adding a boundary back at the end of a sentence
+        for match in self.ADD_BOUNDARY_PATTERN.finditer(text):
+            sentence_boundaries.add(match.end())
