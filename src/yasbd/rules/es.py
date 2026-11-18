@@ -42,7 +42,7 @@ class EsRules(Rules):
     }
 
     INLINE_ONLY_ABBRVS = Rules.INLINE_ONLY_ABBRVS - {"ave"} | {
-        "ej", "p. ej", "vid", "cll", "cra", "diag", "transv", "mz", "mza", 
+        "ej", "p. ej", "vid", "cll", "cra", "diag", "transv", "mz", "mza",
         "lt", "urb", "asent", "dpto", "prov", "mnpio", "conj", "edif",
         "ofic", "av", "avd", "pso", "ctra", "pl", "blvr", "avda", "atte", 
         "fdo", "c", "cdad", "ntra", "ntro", "pol. ind", "rbla", "tlfno", 

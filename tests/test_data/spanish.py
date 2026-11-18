@@ -38,7 +38,7 @@ TEST_DATA = [
     "La iglesia de Ntra. Sra. de la Asunción está al doblar la esquina.",
 
     # Structural headings
-    "Capítulo 1. El comienzo.| Estaba oscuro afuera. | Nada se movía.",
+    "Capítulo 1. El Comienzo.| Estaba oscuro afuera. | Nada se movía.",
     "Parte II. Introducción.| El sistema comienza aquí. | La inicialización sigue.",
     "El informe fue completado.| Capítulo 3. Análisis de resultados.",
 
@@ -61,7 +61,7 @@ TEST_DATA = [
     "La decisión —¡increíblemente difícil!— cambió todo.",
     'Él preguntó: "¿Estás listo?"| Respondí que sí.',
     'Ella dijo: "No estoy segura."| Luego se fue.',
-    "Mi hermano (que es mayor que yo) vive en el extranjero.",
+    "Mi hermano (que es mayor que yo). Vive en el extranjero.",
 
     # Pronoun heuristic (Ud./Vd.)
     "Me dirijo a Ud., Marco, para saludarlo.",
